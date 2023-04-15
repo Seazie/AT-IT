@@ -1,22 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
 
 public class TextSlider : MonoBehaviour
 {
-    public TextMeshProUGUI numberText;
-    private Slider slider;
+    public Slider slider;
+    public TMP_Text text;
 
-     void Start()
+    private void Start()
     {
-        slider = GetComponent<Slider>();
-        SetNumberText(slider.value);
+        // Update the text with the initial value of the slider
+        text.text = slider.value.ToString("0");
+
+        // Add a listener to the slider's value changed event
+        slider.onValueChanged.AddListener(OnSliderValueChanged);
     }
 
-    public void SetNumberText(float value)
+    private void OnSliderValueChanged(float newValue)
     {
-        numberText.text = value.ToString();
+        // Update the text object to display the new value of the slider
+        text.text = newValue.ToString("0");
     }
 }
+
+

@@ -1,47 +1,58 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class FadeIn : MonoBehaviour
 {
-    public float fadeInTime;
-    public Image blackScreen;
-    public AudioSource audioSource;
-
-    private float timer;
-    private bool isFading;
+    public Image blackBackground;
+    public float fadeInTime = 7.0f;
+    public AudioSource musicSource;
+    public float musicFadeInTime = 7.0f;
 
     void Start()
     {
-        // Set the initial values for the timer and the alpha of the black screen
-        timer = 0f;
-        blackScreen.color = new Color(0f, 0f, 0f, 1f);
-        isFading = true;
+        // Start with a black background
+        Color startColor = Color.black;
+        startColor.a = 1.0f;
+        blackBackground.color = startColor;
 
-        // Start playing the audio clip
-        audioSource.Play();
+        // Fade in the scene
+        StartCoroutine(FadeInScene());
+
+        // Start the music fade-in after a set time
+        StartCoroutine(FadeInMusic());
     }
 
-    void Update()
+    IEnumerator FadeInScene()
     {
-        if (isFading)
+        // Fade in the black background
+        float timer = 0.0f;
+        while (timer < fadeInTime)
         {
-            // Increase the timer
             timer += Time.deltaTime;
+            float alpha = Mathf.Lerp(1.0f, 0.0f, timer / fadeInTime);
+            Color newColor = blackBackground.color;
+            newColor.a = alpha;
+            blackBackground.color = newColor;
+            yield return null;
+        }
 
-            // Calculate the new alpha value for the black screen
-            float alpha = 1f - (timer / fadeInTime);
+        // Disable the black background
+        blackBackground.gameObject.SetActive(false);
+    }
 
-            // Set the alpha value of the black screen
-            blackScreen.color = new Color(0f, 0f, 0f, alpha);
-
-            // Set the volume of the audio clip
-            audioSource.volume = 1f - alpha;
-
-            // Check if the fade-in is complete
-            if (timer >= fadeInTime)
-            {
-                isFading = false;
-            }
+    IEnumerator FadeInMusic()
+    {
+        // Fade in the music
+        musicSource.Play();
+        float timer = 0.0f;
+        while (timer < musicFadeInTime)
+        {
+            timer += Time.deltaTime;
+            float volume = Mathf.Lerp(0.0f, 1.0f, timer / musicFadeInTime);
+            musicSource.volume = volume;
+            yield return null;
         }
     }
 }
+
